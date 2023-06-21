@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import useSWR from "swr";
 import { Table } from "antd";
 
@@ -19,12 +19,7 @@ type QueryState = {
 
 const BeersPage: React.FC = () => {
   const navigate = useNavigate();
-  const { search: queryString } = useLocation();
-
-  const queryParams = useMemo(
-    () => new URLSearchParams(queryString),
-    [queryString]
-  );
+  const [queryParams] = useSearchParams();
 
   const [query, setQuery] = useState<QueryState>({
     page: queryParams.get("page") ?? 1,
@@ -32,7 +27,7 @@ const BeersPage: React.FC = () => {
   });
 
   const { data, isLoading, error } = useSWR(
-    `https://api.punkapi.com/v2/beers${queryString}`,
+    `https://api.punkapi.com/v2/beers?${queryParams.toString()}`,
     fetcher
   );
 
